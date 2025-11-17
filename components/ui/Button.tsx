@@ -19,23 +19,22 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const baseStyles =
-    "flex cursor-pointer items-center justify-center overflow-hidden rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+    "flex cursor-pointer items-center justify-center overflow-hidden rounded-lg font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-row";
 
   const variantStyles = {
-    primary: "bg-[#1a4231] text-white hover:bg-[#143626]",
+    primary: "bg-[#1a4231] text-white hover:bg-[#1a4231]/90",
     secondary: "bg-gray-600 text-white hover:bg-gray-700",
-    outline:
-      "border-2 border-[#1a4231] text-[#1a4231] hover:bg-[#1a4231] hover:text-white",
+    outline: "bg-[#1a4231]/10 text-[#1a4231] hover:bg-[#1a4231]/20",
     danger: "bg-red-600 text-white hover:bg-red-700",
   };
 
   const sizeStyles = {
-    sm: "py-2 px-4 text-xs",
-    md: "py-3 px-6 text-sm",
-    lg: "py-4 px-8 text-base",
+    sm: "h-10 px-4 text-sm tracking-[0.015em]",
+    md: "h-10 px-6 text-sm tracking-[0.015em]",
+    lg: "h-12 px-8 text-base",
   };
 
-  const widthStyle = fullWidth ? "w-full" : "";
+  const widthStyle = fullWidth ? "w-full" : "min-w-[84px] max-w-[480px]";
 
   return (
     <button
@@ -68,7 +67,7 @@ export default function Button({
           Cargando...
         </span>
       ) : (
-        children
+        <span className="truncate">{children}</span>
       )}
     </button>
   );
