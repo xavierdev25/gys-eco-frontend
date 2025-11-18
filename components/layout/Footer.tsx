@@ -38,12 +38,12 @@ export default function Footer() {
             <h4 className="font-semibold mb-3">Legal</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a className="text-white/70 hover:text-white" href="#">
+                <a className="text-white/70 hover:text-white" href="/terms">
                   Términos y Condiciones
                 </a>
               </li>
               <li>
-                <a className="text-white/70 hover:text-white" href="#">
+                <a className="text-white/70 hover:text-white" href="/policy">
                   Política de Privacidad
                 </a>
               </li>
