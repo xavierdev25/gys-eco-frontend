@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { BiodegradableIcon } from "../ui/Icon";
 import { useState } from "react";
 import Button from "../ui/Button";
+import { useUIStore } from "@/store/ui.store";
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -17,6 +18,7 @@ export default function Navbar({
 }: NavbarProps) {
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
+  const { openLoginSheet } = useUIStore();
 
   const navLinks = [
     { href: "/", label: "Inicio" },
@@ -111,7 +113,11 @@ export default function Navbar({
                     />
                   </div>
                 </label>
-                <Button size="md" className="hidden md:flex">
+                <Button
+                  size="md"
+                  className="hidden md:flex"
+                  onClick={openLoginSheet}
+                >
                   Acceder
                 </Button>
               </div>
