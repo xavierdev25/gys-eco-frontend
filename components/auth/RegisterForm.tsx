@@ -21,7 +21,7 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    
+
     if (password !== confirmPassword) {
       alert("Las contraseñas no coinciden");
       return;

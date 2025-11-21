@@ -23,7 +23,8 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
     },
     ref
   ) => {
-    const isPassword = type === "password" || (type === "text" && onTogglePassword);
+    const isPassword =
+      type === "password" || (type === "text" && onTogglePassword);
 
     return (
       <label className="flex flex-col w-full">
