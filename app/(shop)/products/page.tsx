@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import ProductCard from "@/components/products/ProductCard";
 import ProductFilters from "@/components/products/ProductFilters";
 import Button from "@/components/ui/Button";
@@ -69,11 +70,11 @@ const filterOptions = [
 ];
 
 export default function ProductsPage() {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const handleQuote = (productId: string) => {
-    console.log("Cotizar producto:", productId);
-    // Implementar lógica de cotización
+    router.push(`/products/${productId}`);
   };
 
   const handleClearFilters = () => {
