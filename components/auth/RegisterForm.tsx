@@ -5,6 +5,8 @@ import Image from "next/image";
 import AuthInput from "./AuthInput";
 import AuthButton from "./AuthButton";
 import AuthDivider from "./AuthDivider";
+import { useAuthStore } from "@/store/auth.store";
+import { useUIStore } from "@/store/ui.store";
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;
@@ -18,31 +20,70 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const { register, login, isLoading, error, clearError } = useAuthStore();
+  const { closeLoginSheet } = useUIStore();
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    clearError();
+    setLocalError(null);
+    setSuccessMessage(null);
 
     if (password !== confirmPassword) {
-      alert("Las contraseñas no coinciden");
+      setLocalError("Las contraseñas no coinciden");
       return;
     }
 
-    console.log("Register attempt:", {
-      firstName,
-      lastName,
-      email,
-      password,
-    });
-    // Aquí irá la lógica de registro
+    if (password.length < 6) {
+      setLocalError("La contraseña debe tener al menos 6 caracteres");
+      return;
+    }
+
+    try {
+      // Registrar usuario
+      const name = `${firstName} ${lastName}`.trim();
+      await register({ email, password, name: name || undefined });
+      
+      setSuccessMessage("¡Cuenta creada exitosamente! Iniciando sesión...");
+      
+      // Auto-login después del registro
+      try {
+        await login({ email, password });
+        closeLoginSheet();
+      } catch {
+        // Si el auto-login falla, redirigir a login
+        onSwitchToLogin();
+      }
+    } catch {
+      // El error se maneja en el store
+      console.log("Error de registro capturado");
+    }
   };
 
   const handleGoogleRegister = () => {
     console.log("Google register attempt");
-    // Aquí irá la lógica de registro con Google
+    // TODO: Implementar OAuth con Google
   };
+
+  const displayError = localError || error;
 
   return (
     <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+      {displayError && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+          {displayError}
+        </div>
+      )}
+      
+      {successMessage && (
+        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
+          {successMessage}
+        </div>
+      )}
+
       <AuthInput
         label="Nombres"
         icon="/icons/users.svg"
@@ -51,6 +92,7 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
         value={firstName}
         onChange={(e) => setFirstName(e.target.value)}
         required
+        disabled={isLoading}
       />
 
       <AuthInput
@@ -61,6 +103,7 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
         value={lastName}
         onChange={(e) => setLastName(e.target.value)}
         required
+        disabled={isLoading}
       />
 
       <AuthInput
@@ -71,6 +114,7 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
+        disabled={isLoading}
       />
 
       <AuthInput
@@ -83,6 +127,7 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
         showPassword={showPassword}
         onTogglePassword={() => setShowPassword(!showPassword)}
         required
+        disabled={isLoading}
       />
 
       <AuthInput
@@ -95,15 +140,28 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
         showPassword={showConfirmPassword}
         onTogglePassword={() => setShowConfirmPassword(!showConfirmPassword)}
         required
+        disabled={isLoading}
       />
 
-      <AuthButton type="submit" className="mt-4">
-        Crear Cuenta
+      <AuthButton type="submit" className="mt-4" disabled={isLoading}>
+        {isLoading ? (
+          <span className="flex items-center justify-center gap-2">
+            <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+            Creando cuenta...
+          </span>
+        ) : (
+          "Crear Cuenta"
+        )}
       </AuthButton>
 
       <AuthDivider />
 
-      <AuthButton type="button" variant="google" onClick={handleGoogleRegister}>
+      <AuthButton 
+        type="button" 
+        variant="google" 
+        onClick={handleGoogleRegister}
+        disabled={isLoading}
+      >
         <Image
           alt="Google logo"
           className="w-5 h-5 mr-3"
@@ -120,6 +178,7 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
           type="button"
           className="font-bold text-[#1B4332] hover:underline"
           onClick={onSwitchToLogin}
+          disabled={isLoading}
         >
           Inicia sesión aquí
         </button>

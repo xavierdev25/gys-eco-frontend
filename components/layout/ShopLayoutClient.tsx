@@ -5,6 +5,7 @@ import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import LoginSheet from "@/components/auth/LoginSheet";
+import CartDrawer from "@/components/cart/CartDrawe";
 import { useResponsive } from "@/hooks/useResponsive";
 import { useUIStore } from "@/store/ui.store";
 
@@ -34,6 +35,9 @@ export default function ShopLayoutClient({
 
       {/* Login Sheet */}
       <LoginSheet isOpen={isLoginSheetOpen} onClose={closeLoginSheet} />
+
+      {/* Cart Drawer */}
+      <CartDrawer />
 
       <div className="flex min-h-screen w-full">
         {/* Contenido principal */}

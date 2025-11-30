@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { BiodegradableIcon } from "../ui/Icon";
 import { useState } from "react";
 import Button from "../ui/Button";
 import { useUIStore } from "@/store/ui.store";
+import { useAuthStore } from "@/store/auth.store";
+import { useCartStore } from "@/store/cart.store";
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -19,6 +22,14 @@ export default function Navbar({
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
   const { openLoginSheet } = useUIStore();
+  const { isAuthenticated, user, logout, checkAuth } = useAuthStore();
+  const { itemCount, loadCart, toggleCart } = useCartStore();
+
+  // Verificar autenticación y cargar carrito al montar
+  useEffect(() => {
+    checkAuth();
+    loadCart();
+  }, [checkAuth, loadCart]);
 
   const navLinks = [
     { href: "/", label: "Inicio" },
@@ -30,6 +41,10 @@ export default function Navbar({
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
     return pathname.startsWith(href);
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   return (
@@ -88,6 +103,7 @@ export default function Navbar({
                 </nav>
               </div>
               <div className="flex flex-1 justify-end gap-2 md:gap-4 items-center">
+                {/* Buscador */}
                 <label className="hidden sm:flex flex-col min-w-40 h-10 max-w-64">
                   <div className="flex w-full flex-1 items-stretch rounded-lg h-full bg-[#1a4231]/10">
                     <div className="text-[#1a4231]/70 flex items-center justify-center pl-3">
@@ -113,13 +129,56 @@ export default function Navbar({
                     />
                   </div>
                 </label>
-                <Button
-                  size="md"
-                  className="hidden md:flex"
-                  onClick={openLoginSheet}
+
+                {/* Botón de Carrito */}
+                <button
+                  onClick={toggleCart}
+                  className="relative p-2 text-[#1a4231] hover:bg-[#1a4231]/5 rounded-lg transition-colors"
+                  aria-label="Ver carrito"
                 >
-                  Acceder
-                </Button>
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
+                  </svg>
+                  {itemCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-[#1B4332] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                      {itemCount > 99 ? "99+" : itemCount}
+                    </span>
+                  )}
+                </button>
+
+                {/* Auth Buttons */}
+                {isAuthenticated ? (
+                  <div className="hidden md:flex items-center gap-3">
+                    <span className="text-sm text-[#1a4231]/70">
+                      Hola, {user?.name || user?.email?.split("@")[0] || "Usuario"}
+                    </span>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleLogout}
+                    >
+                      Salir
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    size="md"
+                    className="hidden md:flex"
+                    onClick={() => openLoginSheet()}
+                  >
+                    Acceder
+                  </Button>
+                )}
               </div>
             </header>
           </div>
