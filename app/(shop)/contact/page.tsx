@@ -53,7 +53,7 @@ export default function ContactPage() {
               ¿Prefieres una respuesta más rápida?
             </p>
             <Button variant="outline" fullWidth>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-row items-center justify-center">
                 <Image
                   src="/icons/sms.svg"
                   alt="WhatsApp icon"

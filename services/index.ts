@@ -7,4 +7,3 @@ export { cartService } from './cartService';
 export { contactService } from './contactService';
 export { strapiService } from './strapiService';
 export type { ContactFormData } from './contactService';
-

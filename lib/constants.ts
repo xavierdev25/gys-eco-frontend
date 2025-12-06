@@ -3,12 +3,12 @@
 const getApiBaseUrl = (): string => {
   // Check if we have an environment variable set
   const envUrl = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_API_URL : undefined;
-  
+
   // Return env URL if it exists and is not empty, otherwise use default
   if (envUrl && envUrl.trim() !== '') {
     return envUrl;
   }
-  
+
   // Default to localhost backend
   return 'http://localhost:3001/api/v1';
 };
@@ -18,11 +18,11 @@ export const API_BASE_URL = getApiBaseUrl();
 // Strapi CMS Configuration
 const getStrapiUrl = (): string => {
   const envUrl = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_STRAPI_URL : undefined;
-  
+
   if (envUrl && envUrl.trim() !== '') {
     return envUrl;
   }
-  
+
   return 'http://localhost:1337';
 };
 
@@ -64,6 +64,12 @@ export const API_ENDPOINTS = {
   ORDERS: {
     BASE: '/orders',
     BY_ID: (id: string) => `/orders/${id}`,
+  },
+  // Payments
+  PAYMENTS: {
+    PREFERENCE: '/payments/preference',
+    WEBHOOK: '/payments/webhook',
+    STATUS: (paymentId: string) => `/payments/status/${paymentId}`,
   },
 } as const;
 
