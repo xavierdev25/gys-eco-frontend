@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cart.store";
 import Button from "../ui/Button";
 import Sheet, {
@@ -12,32 +13,39 @@ import Sheet, {
 } from "../ui/Sheet";
 
 export default function CartDrawer() {
-  const { 
-    items, 
-    total, 
+  const router = useRouter();
+  const {
+    items,
+    total,
     itemCount,
-    isOpen, 
-    closeCart, 
-    updateQuantity, 
+    isOpen,
+    closeCart,
+    updateQuantity,
     removeItem,
-    clearCart 
+    clearCart,
   } = useCartStore();
 
   const formatPrice = (price: number) => {
     return `S/ ${price.toFixed(2)}`;
   };
 
+  const handleCheckout = () => {
+    closeCart();
+    router.push("/checkout");
+  };
+
   return (
     <Sheet isOpen={isOpen} onClose={closeCart} side="right">
       <SheetClose onClose={closeCart} />
-      
+
       <SheetHeader>
         <SheetTitle>Carrito de Compras</SheetTitle>
         <SheetDescription>
-          {itemCount === 0 
-            ? "Tu carrito está vacío" 
-            : `${itemCount} producto${itemCount !== 1 ? 's' : ''} en tu carrito`
-          }
+          {itemCount === 0
+            ? "Tu carrito está vacío"
+            : `${itemCount} producto${
+                itemCount !== 1 ? "s" : ""
+              } en tu carrito`}
         </SheetDescription>
       </SheetHeader>
 
@@ -81,7 +89,9 @@ export default function CartDrawer() {
                       />
                     ) : (
                       <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                        <span className="text-gray-400 text-xs">Sin imagen</span>
+                        <span className="text-gray-400 text-xs">
+                          Sin imagen
+                        </span>
                       </div>
                     )}
                   </div>
@@ -94,11 +104,13 @@ export default function CartDrawer() {
                     <p className="text-sm text-[#1a4231]/60">
                       {formatPrice(item.product.price)} c/u
                     </p>
-                    
+
                     {/* Quantity Controls */}
                     <div className="flex items-center gap-2 mt-2">
                       <button
-                        onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                        onClick={() =>
+                          updateQuantity(item.productId, item.quantity - 1)
+                        }
                         className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-[#1a4231] transition-colors"
                         disabled={item.quantity <= 1}
                       >
@@ -108,19 +120,31 @@ export default function CartDrawer() {
                         {item.quantity}
                       </span>
                       <button
-                        onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                        onClick={() =>
+                          updateQuantity(item.productId, item.quantity + 1)
+                        }
                         className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-[#1a4231] transition-colors"
                       >
                         <span className="text-lg leading-none">+</span>
                       </button>
-                      
+
                       <button
                         onClick={() => removeItem(item.productId)}
                         className="ml-auto text-red-500 hover:text-red-600 p-1"
                         title="Eliminar"
                       >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
                         </svg>
                       </button>
                     </div>
@@ -140,7 +164,9 @@ export default function CartDrawer() {
             <div className="border-t border-gray-200 pt-4 mt-4 space-y-4">
               {/* Total */}
               <div className="flex justify-between items-center">
-                <span className="text-base font-medium text-[#1a4231]">Total</span>
+                <span className="text-base font-medium text-[#1a4231]">
+                  Total
+                </span>
                 <span className="text-xl font-bold text-[#1a4231]">
                   {formatPrice(total)}
                 </span>
@@ -148,12 +174,12 @@ export default function CartDrawer() {
 
               {/* Actions */}
               <div className="flex flex-col gap-2">
-                <Button size="lg" className="w-full">
+                <Button size="lg" className="w-full" onClick={handleCheckout}>
                   Proceder al pago
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   className="w-full"
                   onClick={clearCart}
                 >
@@ -167,5 +193,4 @@ export default function CartDrawer() {
     </Sheet>
   );
 }
-
 

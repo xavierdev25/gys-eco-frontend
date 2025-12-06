@@ -163,3 +163,4 @@ Una vez configurado, estos endpoints estarán disponibles:
 - Para imágenes, Strapi las sirve desde `/uploads/`
 
 
+
